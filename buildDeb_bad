@@ -1,0 +1,19 @@
+#! /bin/bash
+#python setup.py --command-packages=stdeb.command sdist_dsc debianize bdist_deb 
+./cleanall
+rm debian -Rf
+dh_make --createorig -s -c gpl -a -e freetogo@gmail.com 
+python setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
+#python setup.py --command-packages=stdeb.command sdist_dsc debianize
+cp include-binaries debian/source/  
+cp debian/rules	debianRulesBackUp
+echo 'export LDFLAGS="-Wl,--as-needed"' > debian/rules
+cat debianRulesBackUp >> debian/rules
+debchange
+rm deb_dist -Rf
+rm debian/python-tesseract -Rf
+cp debian/rules	debianRulesBackUp
+
+#dpkg-buildpackage -b -rfakeroot -us -uc  #binary only, no source deb
+#dpkg-buildpackage -rfakeroot -us -uc
+

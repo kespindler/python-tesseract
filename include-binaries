@@ -1,0 +1,9 @@
+buildall
+buildDeb
+cleanall
+eurotext.jpg
+eurotext.tif
+debian/python-tesseract/usr/share/doc/python-tesseract/changelog.Debian.gz
+debian/python-tesseract/usr/lib/pyshared/python2.7/_tesseract.so
+
+

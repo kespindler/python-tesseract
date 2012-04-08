@@ -1,0 +1,44 @@
+#! /bin/bash
+#python setup.py --command-packages=stdeb.command sdist_dsc debianize bdist_deb 
+#./cleanall
+#dh_make --createorig -s -c gpl -a -e freetogo@gmail.com
+export DEBEMAIL=${LOGNAME}@nowhere.com
+export DEBFULLNAME=${USERNAME}  
+rootDir=${PWD}
+pkgName=${PWD##*/}
+baseDir=deb_dist/${pkgName}
+rm deb_dist -Rf
+rm debian/source -Rf
+python setup.py --command-packages=stdeb.command sdist_dsc debianize
+#python setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
+cp include-binaries ${baseDir}/debian/source/  
+#echo 'export LDFLAGS="-Wl,--as-needed"' > ${baseDir}/debian/rules
+
+if [ -z $1 ]
+then
+	cp debianPatches/rules ${baseDir}/debian/
+else
+	cp debianPatches/rules4final ${baseDir}/debian/rules
+	cp debianPatches/control ${baseDir}/debian/
+fi
+
+cp debianPatches/control.in ${baseDir}/debian
+cp debianPatches/copyright ${baseDir}/debian
+#cp debianPatches/changelog debian
+#cp debianPatches/* ${baseDir}/debian
+
+#cp  ${baseDir}/debian/changelog debianPatches  
+
+cd  ${baseDir}
+dch --nmu
+debuild -us -uc
+cp debian/control ${rootDir}/debianPatches
+if [ -z $1 ]
+then
+	echo "bug exists in debian/rules"
+	echo "<DEB_AUTO_UPDATE_DEBIAN_CONTROL = yes> must be disabled when finalising"
+	echo "the sole purpose of this line is to gen /debian/control using debian/control.in"
+	echo "to remove the error, run"  
+	echo "./buildDeb -f"
+fi
+

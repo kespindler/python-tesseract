@@ -1,0 +1,7 @@
+#! /bin/bash
+if [ -z $1]
+then
+	echo "no argument"
+else
+	echo "have argument"
+fi
